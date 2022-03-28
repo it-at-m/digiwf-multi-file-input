@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-0">
+  <div class="pa-0 mt-5">
     <VFileInput
       v-model="fileValue"
       :disabled="isReadonly"
@@ -106,11 +106,11 @@ export default class VMultiFileInput extends Vue {
   @Prop()
   rules: any | undefined;
 
-  @Prop({ default: "api/digitalwf-backend-service" }) // TODO
-  apiEndpoint!: string;
+  @Inject('api/digitalwf-backend-service')
+  readonly apiEndpoint!: string;
 
   @Inject('contextId') 
-  readonly contextid!: string
+  readonly contextId!: string
 
   @Emit()
   input(value: any): any {
@@ -119,7 +119,7 @@ export default class VMultiFileInput extends Vue {
 
   created(): void {
     this.readonly = this.schema.readOnly;
-    if (!this.contextid){
+    if (!this.contextId){
       this.errorMessage = "no contextId";
       return;
     }
@@ -233,7 +233,7 @@ export default class VMultiFileInput extends Vue {
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
     const res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
-      this.contextid,
+      this.contextId,
       this.getFullKey()
     );
     // console.log("Filenames: "+res.data);
@@ -264,7 +264,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileUpload(
-      this.contextid,
+      this.contextId,
       this.getFullKey(),
       this.fileValue!.name
     );
@@ -280,7 +280,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileDownload(
-      this.contextid,
+      this.contextId,
       this.getFullKey(),
       filename
     );
@@ -295,7 +295,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileDownload(
-      this.contextid,
+      this.contextId,
       this.getFullKey(),
       filename
     );

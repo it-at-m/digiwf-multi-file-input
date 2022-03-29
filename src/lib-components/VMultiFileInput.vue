@@ -106,10 +106,10 @@ export default class VMultiFileInput extends Vue {
   @Prop()
   rules: any | undefined;
 
-  @Inject('api/digitalwf-backend-service')
+  @Inject('apiEndpoint')
   readonly apiEndpoint!: string;
 
-  @Inject('contextId') 
+  @Inject('contextId')
   readonly contextId!: string
 
   @Emit()

@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-0 mt-5">
+  <div class="pa-0">
     <VFileInput
       v-model="fileValue"
       :disabled="isReadonly"
@@ -253,6 +253,7 @@ export default class VMultiFileInput extends Vue {
     while (key.startsWith("allOf")) {
       key = key.substr(key.indexOf(".") + 1);
     }
+    //key = key.replaceAll(".", "/"); TODO?
     return key;
   }
 
@@ -433,7 +434,7 @@ export default class VMultiFileInput extends Vue {
 
 <style>
 /* remove messages from v-input to make adjacent list seamless  */
-.v-text-field__details {
+.v-file-input .v-text-field__details {
   display: none;
   margin-bottom: 0px;
 }

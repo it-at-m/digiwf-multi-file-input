@@ -6,8 +6,6 @@
       fullKey="allOf-0.allOf-0.antragsdaten.datumAntragstellung.currentOneOf.FormField03"
       :rules="[]"
       label="File"
-      apiEndpoint="api/digitalwf-backend-service"
-      s3Endpoint="s3"
     ></VMultiFileInput>
   </v-app>
 </template>
@@ -22,5 +20,6 @@ import { VMultiFileInput } from "@/entry.esm";
 export default class App extends Vue {
 
   @Provide('contextId') contextId = 'Task01'
+  @Provide('apiEndpoint') apiEndpoint = 'api/digitalwf-backend-service'
 }
 </script>

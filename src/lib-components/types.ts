@@ -1,12 +1,14 @@
-export interface DocumentData {
+interface DocumentData {
     type: string;
     name: string;
     data: string;
 }
   
-export interface FormContext {
+interface FormContext {
     id: string;
     type: string;
 }
+
+export { FormContext, DocumentData };
   
   

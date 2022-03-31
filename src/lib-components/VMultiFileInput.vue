@@ -51,18 +51,8 @@ import { HumanTaskFileRestControllerApiFactory } from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
+import { DocumentData, FormContext } from "@/lib-components/types";
 
-class DocumentData {
-  type: string;
-  name: string;
-  data: string;
-
-  constructor() {
-    this.type = "";
-    this.name = "";
-    this.data = "";
-  }
-}
 @Component({ name: "VMultiFileInput", components: { VBtn, VFileInput, VIcon } })
 export default class VMultiFileInput extends Vue {
   model = "";
@@ -109,8 +99,8 @@ export default class VMultiFileInput extends Vue {
   @Inject('apiEndpoint')
   readonly apiEndpoint!: string;
 
-  @Inject('contextId')
-  readonly contextId!: string
+  @Inject('formContext')
+  readonly formContext!: FormContext
 
   @Emit()
   input(value: any): any {
@@ -119,7 +109,7 @@ export default class VMultiFileInput extends Vue {
 
   created(): void {
     this.readonly = this.schema.readOnly;
-    if (!this.contextId){
+    if (!this.formContext.id){
       this.errorMessage = "no contextId";
       return;
     }
@@ -216,10 +206,11 @@ export default class VMultiFileInput extends Vue {
   }
 
   createDocumentDataInstance(name: string, type: string, data: string) {
-    const doc = new DocumentData();
-    doc.type = type;
-    doc.name = name;
-    doc.data = this.toDataUrl(doc.type, data);
+    const doc: DocumentData = {
+      type: type,
+      name: name,
+      data: this.toDataUrl(type, data)
+    }
     return doc;
   }
 
@@ -233,7 +224,7 @@ export default class VMultiFileInput extends Vue {
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
     const res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
-      this.contextId,
+      this.formContext.id,
       this.getFullKey()
     );
     // console.log("Filenames: "+res.data);
@@ -253,7 +244,6 @@ export default class VMultiFileInput extends Vue {
     while (key.startsWith("allOf")) {
       key = key.substr(key.indexOf(".") + 1);
     }
-    //key = key.replaceAll(".", "/"); TODO?
     return key;
   }
 
@@ -265,7 +255,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileUpload(
-      this.contextId,
+      this.formContext.id,
       this.getFullKey(),
       this.fileValue!.name
     );
@@ -281,7 +271,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileDownload(
-      this.contextId,
+      this.formContext.id,
       this.getFullKey(),
       filename
     );
@@ -296,7 +286,7 @@ export default class VMultiFileInput extends Vue {
     const res = await HumanTaskFileRestControllerApiFactory(
       cfg
     ).getPresignedUrlForFileDownload(
-      this.contextId,
+      this.formContext.id,
       this.getFullKey(),
       filename
     );

@@ -19,7 +19,12 @@ import { VMultiFileInput } from "@/entry.esm";
 })
 export default class App extends Vue {
 
-  @Provide('contextId') contextId = 'Task01'
+  @Provide('formContext')
+  formContext = {
+    id:'Task01',
+    type:'task'
+  }
   @Provide('apiEndpoint') apiEndpoint = 'api/digitalwf-backend-service'
+
 }
 </script>

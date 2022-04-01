@@ -377,3 +377,358 @@ export class HumanTaskFileRestControllerApi extends BaseAPI {
 }
 
 
+/**
+ * ServiceStartFileRestControllerApi - axios parameter creator
+ * @export
+ */
+export const ServiceStartFileRestControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFileNames1: async (definitionKey: string, fieldKey: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'definitionKey' is not null or undefined
+            assertParamExists('getFileNames1', 'definitionKey', definitionKey)
+            // verify required parameter 'fieldKey' is not null or undefined
+            assertParamExists('getFileNames1', 'fieldKey', fieldKey)
+            const localVarPath = `/rest/service/start/file/{definitionKey}/{fieldKey}`
+                .replace(`{${"definitionKey"}}`, encodeURIComponent(String(definitionKey)))
+                .replace(`{${"fieldKey"}}`, encodeURIComponent(String(fieldKey)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication spring_oauth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "spring_oauth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileDeletion1: async (definitionKey: string, fieldKey: string, filename: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'definitionKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDeletion1', 'definitionKey', definitionKey)
+            // verify required parameter 'fieldKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDeletion1', 'fieldKey', fieldKey)
+            // verify required parameter 'filename' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDeletion1', 'filename', filename)
+            const localVarPath = `/rest/service/start/file/{definitionKey}/{fieldKey}/{filename}`
+                .replace(`{${"definitionKey"}}`, encodeURIComponent(String(definitionKey)))
+                .replace(`{${"fieldKey"}}`, encodeURIComponent(String(fieldKey)))
+                .replace(`{${"filename"}}`, encodeURIComponent(String(filename)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication spring_oauth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "spring_oauth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} fileName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileDownload1: async (definitionKey: string, fieldKey: string, fileName: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'definitionKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDownload1', 'definitionKey', definitionKey)
+            // verify required parameter 'fieldKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDownload1', 'fieldKey', fieldKey)
+            // verify required parameter 'fileName' is not null or undefined
+            assertParamExists('getPresignedUrlForFileDownload1', 'fileName', fileName)
+            const localVarPath = `/rest/service/start/file/{definitionKey}/{fieldKey}/{fileName}`
+                .replace(`{${"definitionKey"}}`, encodeURIComponent(String(definitionKey)))
+                .replace(`{${"fieldKey"}}`, encodeURIComponent(String(fieldKey)))
+                .replace(`{${"fileName"}}`, encodeURIComponent(String(fileName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication spring_oauth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "spring_oauth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileUpload1: async (definitionKey: string, fieldKey: string, filename: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'definitionKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileUpload1', 'definitionKey', definitionKey)
+            // verify required parameter 'fieldKey' is not null or undefined
+            assertParamExists('getPresignedUrlForFileUpload1', 'fieldKey', fieldKey)
+            // verify required parameter 'filename' is not null or undefined
+            assertParamExists('getPresignedUrlForFileUpload1', 'filename', filename)
+            const localVarPath = `/rest/service/start/file/{definitionKey}/{fieldKey}/{filename}`
+                .replace(`{${"definitionKey"}}`, encodeURIComponent(String(definitionKey)))
+                .replace(`{${"fieldKey"}}`, encodeURIComponent(String(fieldKey)))
+                .replace(`{${"filename"}}`, encodeURIComponent(String(filename)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication spring_oauth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "spring_oauth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ServiceStartFileRestControllerApi - functional programming interface
+ * @export
+ */
+export const ServiceStartFileRestControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ServiceStartFileRestControllerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFileNames1(definitionKey: string, fieldKey: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<string>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileNames1(definitionKey, fieldKey, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPresignedUrlForFileDeletion1(definitionKey: string, fieldKey: string, filename: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPresignedUrlForFileDeletion1(definitionKey, fieldKey, filename, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} fileName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPresignedUrlForFileDownload1(definitionKey: string, fieldKey: string, fileName: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPresignedUrlForFileDownload1(definitionKey, fieldKey, fileName, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPresignedUrlForFileUpload1(definitionKey: string, fieldKey: string, filename: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPresignedUrlForFileUpload1(definitionKey, fieldKey, filename, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ServiceStartFileRestControllerApi - factory interface
+ * @export
+ */
+export const ServiceStartFileRestControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ServiceStartFileRestControllerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFileNames1(definitionKey: string, fieldKey: string, options?: any): AxiosPromise<Array<string>> {
+            return localVarFp.getFileNames1(definitionKey, fieldKey, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileDeletion1(definitionKey: string, fieldKey: string, filename: string, options?: any): AxiosPromise<string> {
+            return localVarFp.getPresignedUrlForFileDeletion1(definitionKey, fieldKey, filename, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} fileName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileDownload1(definitionKey: string, fieldKey: string, fileName: string, options?: any): AxiosPromise<string> {
+            return localVarFp.getPresignedUrlForFileDownload1(definitionKey, fieldKey, fileName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} definitionKey 
+         * @param {string} fieldKey 
+         * @param {string} filename 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPresignedUrlForFileUpload1(definitionKey: string, fieldKey: string, filename: string, options?: any): AxiosPromise<string> {
+            return localVarFp.getPresignedUrlForFileUpload1(definitionKey, fieldKey, filename, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ServiceStartFileRestControllerApi - object-oriented interface
+ * @export
+ * @class ServiceStartFileRestControllerApi
+ * @extends {BaseAPI}
+ */
+export class ServiceStartFileRestControllerApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} definitionKey 
+     * @param {string} fieldKey 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ServiceStartFileRestControllerApi
+     */
+    public getFileNames1(definitionKey: string, fieldKey: string, options?: any) {
+        return ServiceStartFileRestControllerApiFp(this.configuration).getFileNames1(definitionKey, fieldKey, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} definitionKey 
+     * @param {string} fieldKey 
+     * @param {string} filename 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ServiceStartFileRestControllerApi
+     */
+    public getPresignedUrlForFileDeletion1(definitionKey: string, fieldKey: string, filename: string, options?: any) {
+        return ServiceStartFileRestControllerApiFp(this.configuration).getPresignedUrlForFileDeletion1(definitionKey, fieldKey, filename, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} definitionKey 
+     * @param {string} fieldKey 
+     * @param {string} fileName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ServiceStartFileRestControllerApi
+     */
+    public getPresignedUrlForFileDownload1(definitionKey: string, fieldKey: string, fileName: string, options?: any) {
+        return ServiceStartFileRestControllerApiFp(this.configuration).getPresignedUrlForFileDownload1(definitionKey, fieldKey, fileName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} definitionKey 
+     * @param {string} fieldKey 
+     * @param {string} filename 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ServiceStartFileRestControllerApi
+     */
+    public getPresignedUrlForFileUpload1(definitionKey: string, fieldKey: string, filename: string, options?: any) {
+        return ServiceStartFileRestControllerApiFp(this.configuration).getPresignedUrlForFileUpload1(definitionKey, fieldKey, filename, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+

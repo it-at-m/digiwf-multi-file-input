@@ -47,7 +47,7 @@
 <script lang="ts">
 import { Component, Emit, Inject, Prop, Vue } from "vue-property-decorator";
 import { VBtn, VFileInput, VIcon } from "vuetify/lib/components";
-import { HumanTaskFileRestControllerApiFactory } from "@/api/api-client/api";
+import { HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory } from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
@@ -223,10 +223,20 @@ export default class VMultiFileInput extends Vue {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
-    const res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
-      this.formContext.id,
-      this.getFullKey()
-    );
+
+    let res: any;
+    if (this.formContext.type === 'start'){
+      res = await ServiceStartFileRestControllerApiFactory(cfg).getFileNames1(
+        this.formContext.id,
+        this.getFullKey()
+      );
+    }
+    else {
+      res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
+        this.formContext.id,
+        this.getFullKey()
+      );
+    }
     // console.log("Filenames: "+res.data);
 
     return res.data;
@@ -252,13 +262,21 @@ export default class VMultiFileInput extends Vue {
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
 
-    const res = await HumanTaskFileRestControllerApiFactory(
-      cfg
-    ).getPresignedUrlForFileUpload(
+    let res: any;
+    if (this.formContext.type === 'start'){
+      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileUpload1(
       this.formContext.id,
       this.getFullKey(),
       this.fileValue!.name
-    );
+      );
+    }
+    else {
+      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileUpload(
+      this.formContext.id,
+      this.getFullKey(),
+      this.fileValue!.name
+      );
+    }
 
     return res.data;
   }
@@ -268,13 +286,21 @@ export default class VMultiFileInput extends Vue {
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
 
-    const res = await HumanTaskFileRestControllerApiFactory(
-      cfg
-    ).getPresignedUrlForFileDownload(
+    let res: any;
+    if (this.formContext.type === 'start'){
+      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileDownload1(
       this.formContext.id,
       this.getFullKey(),
       filename
-    );
+      );
+    }
+    else {
+      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileDownload(
+      this.formContext.id,
+      this.getFullKey(),
+      filename
+      );
+    }
 
     return res.data;
   }
@@ -283,13 +309,21 @@ export default class VMultiFileInput extends Vue {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getDELETEConfig());
     cfg.basePath += "/" + this.apiEndpoint;
 
-    const res = await HumanTaskFileRestControllerApiFactory(
-      cfg
-    ).getPresignedUrlForFileDownload(
+    let res: any;
+    if (this.formContext.type === 'start'){
+      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileDeletion1(
       this.formContext.id,
       this.getFullKey(),
       filename
-    );
+      );
+    }
+    else {
+      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileDeletion(
+      this.formContext.id,
+      this.getFullKey(),
+      filename
+      );
+    }
 
     return res.data;
   }

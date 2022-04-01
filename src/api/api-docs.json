@@ -21,6 +21,9 @@
     "spring_oauth" : [ ]
   } ],
   "tags" : [ {
+    "name" : "ServiceStartFileRestController",
+    "description" : "API to perform actions on service start files"
+  }, {
     "name" : "HumanTaskFileRestController",
     "description" : "API to perform actions on human task files"
   } ],
@@ -103,6 +106,84 @@
         }
       }
     },
+    "/rest/service/start/file/{definitionKey}/{fieldKey}/{filename}" : {
+      "post" : {
+        "tags" : [ "ServiceStartFileRestController" ],
+        "operationId" : "getPresignedUrlForFileUpload_1",
+        "parameters" : [ {
+          "name" : "definitionKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fieldKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "filename",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "ServiceStartFileRestController" ],
+        "operationId" : "getPresignedUrlForFileDeletion_1",
+        "parameters" : [ {
+          "name" : "definitionKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fieldKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "filename",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/rest/task/file/{taskId}/{fieldKey}" : {
       "get" : {
         "tags" : [ "HumanTaskFileRestController" ],
@@ -145,6 +226,82 @@
         "operationId" : "getPresignedUrlForFileDownload",
         "parameters" : [ {
           "name" : "taskId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fieldKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/service/start/file/{definitionKey}/{fieldKey}" : {
+      "get" : {
+        "tags" : [ "ServiceStartFileRestController" ],
+        "operationId" : "getFileNames_1",
+        "parameters" : [ {
+          "name" : "definitionKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fieldKey",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/service/start/file/{definitionKey}/{fieldKey}/{fileName}" : {
+      "get" : {
+        "tags" : [ "ServiceStartFileRestController" ],
+        "operationId" : "getPresignedUrlForFileDownload_1",
+        "parameters" : [ {
+          "name" : "definitionKey",
           "in" : "path",
           "required" : true,
           "schema" : {

@@ -127,7 +127,6 @@ export default class VMultiFileInput extends Vue {
   async loadInitialValues() {
     try {
       this.isLoading = true;
-      //console.log("loadInitialValues");
 
       // get filenames
       const filenames = await this.getFilenames();
@@ -163,8 +162,6 @@ export default class VMultiFileInput extends Vue {
   }
 
   async addDocument(mydata: any): Promise<void> {
-    // console.log("addDocument: " + mydata);
-
     const startTime = new Date().getTime();
     this.isLoading = true;
 
@@ -237,7 +234,6 @@ export default class VMultiFileInput extends Vue {
         this.getFullKey()
       );
     }
-    // console.log("Filenames: "+res.data);
 
     return res.data;
   }
@@ -386,7 +382,6 @@ export default class VMultiFileInput extends Vue {
   }
 
   async removeDocument(filename: string): Promise<void> {
-    console.log("removeDocument: " + filename);
     for (let i = 0; i < this.documents.length; i++) {
       if (this.documents[i].name == filename) {
         try {

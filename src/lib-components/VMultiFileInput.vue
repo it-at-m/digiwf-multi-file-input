@@ -40,7 +40,6 @@
         </v-card>
       </div>
     </div>
-    <div class="errormessage">{{ errorMessage }}</div>
   </div>
 </template>
 
@@ -134,6 +133,11 @@ export default class VMultiFileInput extends Vue {
         await this.loadFile(filename);
       }
       this.errorMessage = "";
+      if (this.documents.length > 0){
+        // set dummy value to satisfy "required"-rule
+        this.fileValue = new File([""], this.documents[0].name);
+        this.input(this.fileValue);
+      }
     } catch (error) {
       this.errorMessage = "Die Dateien konnten nicht geladen werden.";
     }
@@ -182,7 +186,6 @@ export default class VMultiFileInput extends Vue {
       this.documents.push(doc);
 
       this.errorMessage = "";
-      this.fileValue = null;
       this.isLoading = false;
       this.input(this.documents);
     } catch (error: any) {
@@ -390,6 +393,11 @@ export default class VMultiFileInput extends Vue {
           );
           await globalAxios.delete(presignedDeleteUrl);
           this.documents.splice(i, 1);
+          if (this.documents.length == 0){
+            // set null value to violate "required"-rule
+            this.fileValue = null;
+            this.input(null);
+          }
           break; // only remove first item
         } catch (error) {
           this.errorMessage = "Die Datei konnte nicht gelöscht werden.";
@@ -452,13 +460,9 @@ export default class VMultiFileInput extends Vue {
 </script>
 
 <style>
-/* remove messages from v-input to make adjacent list seamless  */
-.v-file-input .v-text-field__details {
+/* hide last added filename in textfield */
+.v-file-input .v-file-input__text {
   display: none;
-  margin-bottom: 0px;
-}
-.v-input__slot {
-  margin-bottom: -1px;
 }
 </style>
 
@@ -470,7 +474,8 @@ export default class VMultiFileInput extends Vue {
 .listWrapper {
   overflow: auto;
   z-index: 10;
-  margin-top: 0px;
+  margin-top: -6px;
+  margin-bottom: 26px;
 }
 
 .errormessage {

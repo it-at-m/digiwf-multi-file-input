@@ -136,7 +136,7 @@ export default class VMultiFileInput extends Vue {
       if (this.documents.length > 0){
         // set dummy value to satisfy "required"-rule
         this.fileValue = new File([""], this.documents[0].name);
-        this.input(this.fileValue);
+        this.input(this.documents);
       }
     } catch (error) {
       this.errorMessage = "Die Dateien konnten nicht geladen werden.";
@@ -396,7 +396,6 @@ export default class VMultiFileInput extends Vue {
           if (this.documents.length == 0){
             // set null value to violate "required"-rule
             this.fileValue = null;
-            this.input(null);
           }
           break; // only remove first item
         } catch (error) {

@@ -16,7 +16,7 @@
 
     <div v-if="documents && documents.length > 0" class="listWrapper">
       <template v-for="doc in documents">
-        <v-file-preview :document="doc" :key="doc.name" />
+        <v-file-preview :document="doc" :key="doc.name" @remove-document="removeDocument"/>
       </template>
     </div>
     <div style="clear: both;"></div>
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Emit, Inject, Prop, Vue } from "vue-property-decorator";
-import { VBtn, VFileInput, VIcon } from "vuetify/lib/components";
+import { VFileInput } from "vuetify/lib/components";
 import { HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory } from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
@@ -33,7 +33,7 @@ import globalAxios from "axios";
 import { DocumentData, FormContext } from "@/lib-components/types";
 import VFilePreview from "@/lib-components/VFilePreview.vue";
 
-@Component({ name: "VMultiFileInput", components: { VBtn, VFileInput, VIcon, VFilePreview } })
+@Component({ name: "VMultiFileInput", components: { VFileInput, VFilePreview } })
 export default class VMultiFileInput extends Vue {
   model = "";
   fileValue: File | null = null;
@@ -147,7 +147,6 @@ export default class VMultiFileInput extends Vue {
   }
 
   async addDocument(mydata: any): Promise<void> {
-    console.log("add");
     const startTime = new Date().getTime();
     this.isLoading = true;
 
@@ -188,7 +187,6 @@ export default class VMultiFileInput extends Vue {
   }
 
   createDocumentDataInstance(name: string, type: string, data: string) {
-    console.log("type1:"  + name +" -> " + type);
     const doc: DocumentData = {
       type: type,
       name: name,
@@ -327,106 +325,26 @@ export default class VMultiFileInput extends Vue {
     reader.readAsArrayBuffer(this.fileValue);
   }
 
-  calculateIcon(type: string): string {
-    if (type === "application/pdf") {
-      return "mdi-file-pdf";
-    }
-    if (
-      type === "application/msword" ||
-      type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-      type === "application/vnd.oasis.opendocument.text"
-    ) {
-      return "mdi-file-word";
-    }
-    if (
-      type === "application/vnd.ms-powerpoint" ||
-      type ===
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
-      type === "application/vnd.oasis.opendocument.presentation"
-    ) {
-      return "mdi-file-powerpoint";
-    }
-    if (
-      type === "application/vnd.ms-excel" ||
-      type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-      type === "application/vnd.oasis.opendocument.spreadsheet"
-    ) {
-      return "mdi-file-excel";
-    }
-    if (
-      type === "application/xml" ||
-      type === "application/json" ||
-      type === "application/xhtml+xml" ||
-      type === "text/html" ||
-      type === "text/xml"
-    ) {
-      return "mdi-file-code";
-    }
-    return "mdi-file";
-  }
-
-  async removeDocument(filename: string): Promise<void> {
+  async removeDocument(document: DocumentData): Promise<void> {
     for (let i = 0; i < this.documents.length; i++) {
-      if (this.documents[i].name == filename) {
-        try {
-          const presignedDeleteUrl = await this.getPresignedUrlForDelete(
-            filename
-          );
-          await globalAxios.delete(presignedDeleteUrl);
+      if (this.documents[i].name == document.name) {
+        // try { TODO
+        //   const presignedDeleteUrl = await this.getPresignedUrlForDelete(
+        //     document.name
+        //   );
+        //   await globalAxios.delete(presignedDeleteUrl);
           this.documents.splice(i, 1);
-          if (this.documents.length == 0){
-            // set null value to violate "required"-rule
-            this.fileValue = null;
-          }
+        //   if (this.documents.length == 0){
+        //     // set null value to violate "required"-rule
+        //     this.fileValue = null;
+        //   }
           break; // only remove first item
-        } catch (error) {
-          this.errorMessage = "Die Datei konnte nicht gelöscht werden.";
-        }
+        // } catch (error) {
+        //   this.errorMessage = "Die Datei konnte nicht gelöscht werden.";
+        // }
       }
     }
     this.input(this.documents);
-  }
-
-  isImage(doc: DocumentData): boolean {
-    return (
-      doc.type.toLowerCase() === "image/jpeg" ||
-      doc.type.toLowerCase() === "image/png"
-    );
-  }
-
-  openInTab(doc: DocumentData): void {
-    const blobUrl = this.toBlobUrl(doc.data, doc.type!);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.setAttribute("download", doc.name!);
-    document.body.appendChild(link);
-    link.click();
-  }
-
-  toBlobUrl(base64Data: any, contentType: string): string {
-    const byteCharacters = atob(
-      base64Data.substr(`data:${contentType};base64,`.length)
-    );
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-      const slice = byteCharacters.slice(offset, offset + 1024);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-
-      byteArrays.push(byteArray);
-    }
-    const blob = new Blob(byteArrays, { type: contentType });
-    const blobUrl = URL.createObjectURL(blob);
-
-    return blobUrl;
   }
 
   arrayBufferToBase64(buffer: ArrayBuffer) {
@@ -449,42 +367,12 @@ export default class VMultiFileInput extends Vue {
 </style>
 
 <style scoped>
-.removeButton {
-  margin: 0;
-}
-
 .listWrapper {
-  /* overflow: auto;
-  z-index: 10; */
   margin-top: -6px;
   margin-bottom: 26px;
   float: left;
   display: flex;
 }
 
-.errormessage {
-  margin-bottom: 24px;
-  color: #ff5252 !important;
-  caret-color: #ff5252 !important;
-  font-size: 12px;
-  padding-left: 6px;
-  word-break: break-word;
-}
 
-.documentLink {
-  white-space: nowrap;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.linkline {
-  margin: 2px 2px 2px 2px;
-  padding: 5px;
-}
-
-.linkline:hover {
-  background-color: #fafafa;
-}
 </style>

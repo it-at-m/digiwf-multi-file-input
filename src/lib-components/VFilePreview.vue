@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-card
+      class="doc-card"
       elevation="2"
       outlined
-      style="height: 200px; overflow: hidden; margin: 0 4px"
     >
-      <v-card-title class="text-subtitle-1" style="background: #eeeeee">
+      <v-card-title class="text-subtitle-1 title">
         <div class="d-flex align-start flex-row">
           <v-icon left size="30" class="mr-2">
             {{ calculateIcon(document.type) }}
@@ -13,48 +13,47 @@
           {{ document.name }}
         </div>
       </v-card-title>
-      <div>
+      <div class="linkbox">
         <a target="_blank" @click="openInTab(document)">
           <v-img
             v-if="isImage(document)"
+            class="linkbox-img"
             :src="document.data"
             height="200"
             width="200"
-            style="margin-left: auto;margin-right: auto;"
             alt="Image preview..."
           >
           </v-img>
           <vue2-pdf-embed
             v-else
             :source="document.data"
-            style="max-width: 200px; max-height: 200px; overflow: hidden; margin-left:auto; margin-right:auto"
+            class="linkbox-pdf"
           />
+        </a>
             <div>
-              <div style="position: absolute; left: 0; bottom: 0; margin-bottom: 0">155MB</div>
+              <div class="footer">155MB</div>
               <template v-if="!readonly">
                 <v-btn
-                  class="removeButton"
+                  class="removeButton ma-1"
                   style="position: absolute; right: 0; bottom: 0"
                   elevation="1"
                   icon
-                  @click="removeDocument(document.name)"
+                  @click="removeDocument"
                 >
                   <v-icon> mdi-delete </v-icon>
                 </v-btn>
               </template>
             </div>
-        </a>
       </div>
     </v-card>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Emit, Vue } from "vue-property-decorator";
 import { VBtn, VIcon } from "vuetify/lib/components";
 import { DocumentData } from "@/lib-components/types";
 import Vue2PdfEmbed from "vue-pdf-embed/dist/vue2-pdf-embed.js";
-//import Vue2PdfEmbed from 'vue2-pdf-embed';
 
 @Component({ name: "VFilePreview", components: { VBtn, VIcon, Vue2PdfEmbed } })
 export default class VFilePreview extends Vue {
@@ -64,18 +63,8 @@ export default class VFilePreview extends Vue {
   @Prop({ default: false })
   readonly!: Boolean;
 
-  @Emit()
-  input(value: any): any {
-    return value;
-  }
-
-  created(): void {
-    console.log(JSON.stringify(this.document));
-  }
-
   calculateIcon(type: string): string {
-    console.log("type: " + type);
-    if (type === "image/jpeg" || type === "image/png" || type === "image/gif") {
+    if (type === "image/jpeg" || type === "image/png" || type === "image/gif" || type === "image/bmp") {
       return "mdi-image";
     }
     if (type === "application/pdf") {
@@ -157,62 +146,56 @@ export default class VFilePreview extends Vue {
     return blobUrl;
   }
 
-  arrayBufferToBase64(buffer: ArrayBuffer) {
-    let binary = "";
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
+  @Emit('remove-document')
+  removeDocument() {
+    return this.document;
   }
-
-  removeDocument() {}
 }
 </script>
-
-<style>
-/* hide last added filename in textfield */
-.v-file-input .v-file-input__text {
-  display: none;
-}
-</style>
 
 <style scoped>
 .removeButton {
   margin: 0;
 }
 
-.listWrapper {
-  overflow: auto;
-  z-index: 10;
-  margin-top: -6px;
-  margin-bottom: 26px;
+.doc-card {
+  height: 200px; 
+  overflow: hidden; 
+  margin: 0 4px;
 }
 
-.errormessage {
-  margin-bottom: 24px;
-  color: #ff5252 !important;
-  caret-color: #ff5252 !important;
-  font-size: 12px;
-  padding-left: 6px;
-  word-break: break-word;
+.title {
+  background: #eeeeee
 }
 
-.documentLink {
-  white-space: nowrap;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.linkline {
+.linkbox {
   margin: 2px 2px 2px 2px;
   padding: 5px;
 }
 
-.linkline:hover {
+.linkbox:hover {
   background-color: #fafafa;
+}
+
+.linkbox-img {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.linkbox-pdf {
+  max-width: 200px; 
+  max-height: 200px; 
+  overflow: hidden; 
+  margin-left:auto; 
+  margin-right:auto;
+}
+
+.footer {
+  position: absolute; 
+  left: 0; 
+  bottom: 0; 
+  margin-bottom: 0; 
+  color: #AAAAAA; 
+  font-size: 13px;
 }
 </style>

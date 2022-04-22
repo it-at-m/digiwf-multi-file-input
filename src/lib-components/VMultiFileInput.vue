@@ -16,24 +16,34 @@
 
     <div v-if="documents && documents.length > 0" class="listWrapper">
       <template v-for="doc in documents">
-        <v-file-preview :document="doc" :key="doc.name" @remove-document="removeDocument"/>
+        <v-file-preview
+          :document="doc"
+          :key="doc.name"
+          @remove-document="removeDocument"
+        />
       </template>
     </div>
-    <div style="clear: both;"></div>
+    <div style="clear: both"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Inject, Prop, Vue } from "vue-property-decorator";
 import { VFileInput } from "vuetify/lib/components";
-import { HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory } from "@/api/api-client/api";
+import {
+  HumanTaskFileRestControllerApiFactory,
+  ServiceStartFileRestControllerApiFactory,
+} from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
 import { DocumentData, FormContext } from "@/lib-components/types";
 import VFilePreview from "@/lib-components/VFilePreview.vue";
 
-@Component({ name: "VMultiFileInput", components: { VFileInput, VFilePreview } })
+@Component({
+  name: "VMultiFileInput",
+  components: { VFileInput, VFilePreview },
+})
 export default class VMultiFileInput extends Vue {
   model = "";
   fileValue: File | null = null;
@@ -76,11 +86,11 @@ export default class VMultiFileInput extends Vue {
   @Prop()
   rules: any | undefined;
 
-  @Inject('apiEndpoint')
+  @Inject("apiEndpoint")
   readonly apiEndpoint!: string;
 
-  @Inject('formContext')
-  readonly formContext!: FormContext
+  @Inject("formContext")
+  readonly formContext!: FormContext;
 
   @Emit()
   input(value: any): any {
@@ -89,7 +99,7 @@ export default class VMultiFileInput extends Vue {
 
   created(): void {
     this.readonly = this.schema.readOnly;
-    if (!this.formContext.id){
+    if (!this.formContext.id) {
       this.errorMessage = "no contextId";
       return;
     }
@@ -114,7 +124,7 @@ export default class VMultiFileInput extends Vue {
         await this.loadFile(filename);
       }
       this.errorMessage = "";
-      if (this.documents.length > 0){
+      if (this.documents.length > 0) {
         // set dummy value to satisfy "required"-rule
         this.fileValue = new File([""], this.documents[0].name);
         this.input(this.documents);
@@ -154,7 +164,7 @@ export default class VMultiFileInput extends Vue {
       this.isLoading = true;
 
       this.validateFileSize(mydata);
-      
+
       const base64 = this.arrayBufferToBase64(mydata);
       const presignedUrl = await this.getPresignedUrlForPost();
       await globalAxios.put(presignedUrl, base64);
@@ -189,25 +199,28 @@ export default class VMultiFileInput extends Vue {
   }
 
   validateFileSize(mydata: ArrayBuffer) {
-    if (mydata.byteLength > 10485760){
-        this.errorMessage = 'Die Datei ist muss kleiner als 10MB sein.'
-        throw new Error("File too large.");
-      }
+    if (mydata.byteLength > 10485760) {
+      this.errorMessage = "Die Datei ist muss kleiner als 10MB sein.";
+      throw new Error("File too large.");
+    }
   }
 
-  createDocumentDataInstance(name: string, type: string, data: string, size?: number) {
-    if (!size){
-      let content = atob(
-      data.substr(`data:${type};base64,`.length)
-    );
+  createDocumentDataInstance(
+    name: string,
+    type: string,
+    data: string,
+    size?: number
+  ) {
+    if (!size) {
+      const content = atob(data.substr(`data:${type};base64,`.length));
       size = content.length;
     }
     const doc: DocumentData = {
       type: type,
       name: name,
       data: this.toDataUrl(type, data),
-      size: size
-    }
+      size: size,
+    };
     return doc;
   }
 
@@ -222,13 +235,12 @@ export default class VMultiFileInput extends Vue {
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
-    if (this.formContext.type === 'start'){
+    if (this.formContext.type === "start") {
       res = await ServiceStartFileRestControllerApiFactory(cfg).getFileNames1(
         this.formContext.id,
         this.getFullKey()
       );
-    }
-    else {
+    } else {
       res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
         this.formContext.id,
         this.getFullKey()
@@ -259,18 +271,21 @@ export default class VMultiFileInput extends Vue {
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
-    if (this.formContext.type === 'start'){
-      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileUpload1(
-      this.formContext.id,
-      this.getFullKey(),
-      this.fileValue!.name
+    if (this.formContext.type === "start") {
+      res = await ServiceStartFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileUpload1(
+        this.formContext.id,
+        this.getFullKey(),
+        this.fileValue!.name
       );
-    }
-    else {
-      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileUpload(
-      this.formContext.id,
-      this.getFullKey(),
-      this.fileValue!.name
+    } else {
+      res = await HumanTaskFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileUpload(
+        this.formContext.id,
+        this.getFullKey(),
+        this.fileValue!.name
       );
     }
 
@@ -283,18 +298,21 @@ export default class VMultiFileInput extends Vue {
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
-    if (this.formContext.type === 'start'){
-      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileDownload1(
-      this.formContext.id,
-      this.getFullKey(),
-      filename
+    if (this.formContext.type === "start") {
+      res = await ServiceStartFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileDownload1(
+        this.formContext.id,
+        this.getFullKey(),
+        filename
       );
-    }
-    else {
-      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileDownload(
-      this.formContext.id,
-      this.getFullKey(),
-      filename
+    } else {
+      res = await HumanTaskFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileDownload(
+        this.formContext.id,
+        this.getFullKey(),
+        filename
       );
     }
 
@@ -306,18 +324,21 @@ export default class VMultiFileInput extends Vue {
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
-    if (this.formContext.type === 'start'){
-      res = await ServiceStartFileRestControllerApiFactory(cfg).getPresignedUrlForFileDeletion1(
-      this.formContext.id,
-      this.getFullKey(),
-      filename
+    if (this.formContext.type === "start") {
+      res = await ServiceStartFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileDeletion1(
+        this.formContext.id,
+        this.getFullKey(),
+        filename
       );
-    }
-    else {
-      res = await HumanTaskFileRestControllerApiFactory(cfg).getPresignedUrlForFileDeletion(
-      this.formContext.id,
-      this.getFullKey(),
-      filename
+    } else {
+      res = await HumanTaskFileRestControllerApiFactory(
+        cfg
+      ).getPresignedUrlForFileDeletion(
+        this.formContext.id,
+        this.getFullKey(),
+        filename
       );
     }
 
@@ -350,7 +371,7 @@ export default class VMultiFileInput extends Vue {
           );
           await globalAxios.delete(presignedDeleteUrl);
           this.documents.splice(i, 1);
-          if (this.documents.length == 0){
+          if (this.documents.length == 0) {
             // set null value to violate "required"-rule
             this.fileValue = null;
           }
@@ -389,5 +410,4 @@ export default class VMultiFileInput extends Vue {
   float: left;
   display: flex;
 }
-
 </style>

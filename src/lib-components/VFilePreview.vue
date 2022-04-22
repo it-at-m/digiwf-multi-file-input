@@ -131,7 +131,7 @@ export default class VFilePreview extends Vue {
   get blobUrl(): string {
     const byteCharacters = this.byteCharacters;
 
-    const byteArrays = [];
+    const byteArrays:Uint8Array[] = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
       const slice = byteCharacters.slice(offset, offset + 1024);

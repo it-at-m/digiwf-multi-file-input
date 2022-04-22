@@ -15,31 +15,11 @@
     />
 
     <div v-if="documents && documents.length > 0" class="listWrapper">
-      <div v-for="doc in documents" :key="doc.name">
-        <v-card elevation="3" class="d-flex align-center linkline">
-          <a target="_blank" class="documentLink" @click="openInTab(doc)">
-            <v-img
-              v-if="isImage(doc)"
-              :src="doc.data"
-              class="mr-2"
-              max-height="200"
-              max-width="200"
-              alt="Image preview..."
-            />
-            <v-icon v-else size="30" class="mr-2">
-              {{ calculateIcon(doc.fileType) }}
-            </v-icon>
-            {{ doc.name }}
-          </a>
-          <v-spacer />
-          <template v-if="!readonly">
-            <v-btn class="removeButton" icon @click="removeDocument(doc.name)">
-              <v-icon> mdi-delete </v-icon>
-            </v-btn>
-          </template>
-        </v-card>
-      </div>
+      <template v-for="doc in documents">
+        <v-file-preview :document="doc" :key="doc.name" />
+      </template>
     </div>
+    <div style="clear: both;"></div>
   </div>
 </template>
 
@@ -51,8 +31,9 @@ import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
 import { DocumentData, FormContext } from "@/lib-components/types";
+import VFilePreview from "@/lib-components/VFilePreview.vue";
 
-@Component({ name: "VMultiFileInput", components: { VBtn, VFileInput, VIcon } })
+@Component({ name: "VMultiFileInput", components: { VBtn, VFileInput, VIcon, VFilePreview } })
 export default class VMultiFileInput extends Vue {
   model = "";
   fileValue: File | null = null;
@@ -112,7 +93,7 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "no contextId";
       return;
     }
-    this.loadInitialValues();
+    //this.loadInitialValues();
   }
 
   get isReadonly(): boolean {
@@ -166,16 +147,17 @@ export default class VMultiFileInput extends Vue {
   }
 
   async addDocument(mydata: any): Promise<void> {
+    console.log("add");
     const startTime = new Date().getTime();
     this.isLoading = true;
 
     try {
       this.isLoading = true;
 
-      const presignedUrl = await this.getPresignedUrlForPost();
+      //const presignedUrl = await this.getPresignedUrlForPost();
 
       const base64 = this.arrayBufferToBase64(mydata);
-      await globalAxios.put(presignedUrl, base64);
+      //await globalAxios.put(presignedUrl, base64);
 
       const doc = this.createDocumentDataInstance(
         this.fileValue!.name,
@@ -206,6 +188,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   createDocumentDataInstance(name: string, type: string, data: string) {
+    console.log("type1:"  + name +" -> " + type);
     const doc: DocumentData = {
       type: type,
       name: name,
@@ -471,10 +454,12 @@ export default class VMultiFileInput extends Vue {
 }
 
 .listWrapper {
-  overflow: auto;
-  z-index: 10;
+  /* overflow: auto;
+  z-index: 10; */
   margin-top: -6px;
   margin-bottom: 26px;
+  float: left;
+  display: flex;
 }
 
 .errormessage {

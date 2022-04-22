@@ -61,7 +61,7 @@ export default class VFilePreview extends Vue {
   document!: DocumentData;
 
   @Prop({ default: false })
-  readonly!: Boolean;
+  readonly!: boolean;
 
   get byteCharacters() {
     return  atob(

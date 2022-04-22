@@ -24,10 +24,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Provide } from "vue-property-decorator";
-import { VMultiFileInput } from "@/entry.esm";
-@Component({
-  components: { VMultiFileInput },
-})
+
+@Component({})
 export default class App extends Vue {
 
   @Provide('formContext')

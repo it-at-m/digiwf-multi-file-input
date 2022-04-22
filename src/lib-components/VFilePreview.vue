@@ -45,9 +45,8 @@
 import { Component, Prop, Emit, Vue } from "vue-property-decorator";
 import { VBtn, VIcon } from "vuetify/lib/components";
 import { DocumentData } from "@/lib-components/types";
-import Vue2PdfEmbed from "vue-pdf-embed/dist/vue2-pdf-embed.js";
 
-@Component({ name: "VFilePreview", components: { VBtn, VIcon, Vue2PdfEmbed } })
+@Component({ name: "VFilePreview", components: { VBtn, VIcon } })
 export default class VFilePreview extends Vue {
   @Prop()
   document!: DocumentData;

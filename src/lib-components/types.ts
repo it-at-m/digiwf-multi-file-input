@@ -2,6 +2,7 @@ interface DocumentData {
     type: string;
     name: string;
     data: string;
+    size: number;
 }
   
 interface FormContext {

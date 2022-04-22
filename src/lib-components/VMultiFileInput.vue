@@ -93,7 +93,7 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "no contextId";
       return;
     }
-    //this.loadInitialValues();
+    this.loadInitialValues();
   }
 
   get isReadonly(): boolean {
@@ -153,15 +153,17 @@ export default class VMultiFileInput extends Vue {
     try {
       this.isLoading = true;
 
-      //const presignedUrl = await this.getPresignedUrlForPost();
-
+      this.validateFileSize(mydata);
+      
       const base64 = this.arrayBufferToBase64(mydata);
-      //await globalAxios.put(presignedUrl, base64);
+      const presignedUrl = await this.getPresignedUrlForPost();
+      await globalAxios.put(presignedUrl, base64);
 
       const doc = this.createDocumentDataInstance(
         this.fileValue!.name,
         this.fileValue!.type,
-        base64
+        base64,
+        mydata.byteLength
       );
 
       this.documents.push(doc);
@@ -176,8 +178,8 @@ export default class VMultiFileInput extends Vue {
         error.response.status == 409
       ) {
         this.errorMessage = "Das Dokument existiert bereits.";
-      } else {
-        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.";
+      } else if (!this.errorMessage) {
+        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.: ";
       }
       setTimeout(() => {
         this.isLoading = false;
@@ -186,11 +188,25 @@ export default class VMultiFileInput extends Vue {
     this.isLoading = false;
   }
 
-  createDocumentDataInstance(name: string, type: string, data: string) {
+  validateFileSize(mydata: ArrayBuffer) {
+    if (mydata.byteLength > 10485760){
+        this.errorMessage = 'Die Datei ist muss kleiner als 10MB sein.'
+        throw new Error("File too large.");
+      }
+  }
+
+  createDocumentDataInstance(name: string, type: string, data: string, size?: number) {
+    if (!size){
+      let content = atob(
+      data.substr(`data:${type};base64,`.length)
+    );
+      size = content.length;
+    }
     const doc: DocumentData = {
       type: type,
       name: name,
-      data: this.toDataUrl(type, data)
+      data: this.toDataUrl(type, data),
+      size: size
     }
     return doc;
   }
@@ -308,7 +324,7 @@ export default class VMultiFileInput extends Vue {
     return res.data;
   }
 
-  changeInput(/*fileInput: any*/) {
+  changeInput() {
     if (!this.fileValue) {
       return;
     }
@@ -328,20 +344,20 @@ export default class VMultiFileInput extends Vue {
   async removeDocument(document: DocumentData): Promise<void> {
     for (let i = 0; i < this.documents.length; i++) {
       if (this.documents[i].name == document.name) {
-        // try { TODO
-        //   const presignedDeleteUrl = await this.getPresignedUrlForDelete(
-        //     document.name
-        //   );
-        //   await globalAxios.delete(presignedDeleteUrl);
+        try {
+          const presignedDeleteUrl = await this.getPresignedUrlForDelete(
+            document.name
+          );
+          await globalAxios.delete(presignedDeleteUrl);
           this.documents.splice(i, 1);
-        //   if (this.documents.length == 0){
-        //     // set null value to violate "required"-rule
-        //     this.fileValue = null;
-        //   }
+          if (this.documents.length == 0){
+            // set null value to violate "required"-rule
+            this.fileValue = null;
+          }
           break; // only remove first item
-        // } catch (error) {
-        //   this.errorMessage = "Die Datei konnte nicht gelöscht werden.";
-        // }
+        } catch (error) {
+          this.errorMessage = "Die Datei konnte nicht gelöscht werden.";
+        }
       }
     }
     this.input(this.documents);
@@ -373,6 +389,5 @@ export default class VMultiFileInput extends Vue {
   float: left;
   display: flex;
 }
-
 
 </style>

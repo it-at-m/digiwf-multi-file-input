@@ -8,15 +8,15 @@
       <v-card-title class="text-subtitle-1 title">
         <div class="d-flex align-start flex-row">
           <v-icon left size="30" class="mr-2">
-            {{ calculateIcon(document.type) }}
+            {{ icon }}
           </v-icon>
           {{ document.name }}
         </div>
       </v-card-title>
       <div class="linkbox">
-        <a target="_blank" @click="openInTab(document)">
+        <a target="_blank" @click="openInTab()">
           <v-img
-            v-if="isImage(document)"
+            v-if="isImage"
             class="linkbox-img"
             :src="document.data"
             height="200"
@@ -31,10 +31,10 @@
           />
         </a>
             <div>
-              <div class="footer">155MB</div>
+              <div class="footer">{{formatBytes(0)}}</div>
               <template v-if="!readonly">
                 <v-btn
-                  class="removeButton ma-1"
+                  class="remove-button ma-1"
                   style="position: absolute; right: 0; bottom: 0"
                   elevation="1"
                   icon
@@ -63,69 +63,74 @@ export default class VFilePreview extends Vue {
   @Prop({ default: false })
   readonly!: Boolean;
 
-  calculateIcon(type: string): string {
-    if (type === "image/jpeg" || type === "image/png" || type === "image/gif" || type === "image/bmp") {
+  get byteCharacters() {
+    return  atob(
+      this.document.data.substr(`data:${this.document.type};base64,`.length)
+    );
+  }
+
+  get icon(): string {
+    if (this.document.type === "image/jpeg" || this.document.type === "image/png" || this.document.type === "image/gif" || this.document.type === "image/bmp") {
       return "mdi-image";
     }
-    if (type === "application/pdf") {
+    if (this.document.type === "application/pdf") {
       return "mdi-file-pdf";
     }
     if (
-      type === "application/msword" ||
-      type ===
+      this.document.type === "application/msword" ||
+      this.document.type ===
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-      type === "application/vnd.oasis.opendocument.text"
+      this.document.type === "application/vnd.oasis.opendocument.text"
     ) {
       return "mdi-file-word";
     }
     if (
-      type === "application/vnd.ms-powerpoint" ||
-      type ===
+      this.document.type === "application/vnd.ms-powerpoint" ||
+      this.document.type ===
         "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
-      type === "application/vnd.oasis.opendocument.presentation"
+      this.document.type === "application/vnd.oasis.opendocument.presentation"
     ) {
       return "mdi-file-powerpoint";
     }
     if (
-      type === "application/vnd.ms-excel" ||
-      type ===
+      this.document.type === "application/vnd.ms-excel" ||
+      this.document.type ===
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-      type === "application/vnd.oasis.opendocument.spreadsheet"
+      this.document.type === "application/vnd.oasis.opendocument.spreadsheet"
     ) {
       return "mdi-file-excel";
     }
     if (
-      type === "application/xml" ||
-      type === "application/json" ||
-      type === "application/xhtml+xml" ||
-      type === "text/html" ||
-      type === "text/xml"
+      this.document.type === "application/xml" ||
+      this.document.type === "application/json" ||
+      this.document.type === "application/xhtml+xml" ||
+      this.document.type === "text/html" ||
+      this.document.type === "text/xml"
     ) {
       return "mdi-file-code";
     }
     return "mdi-file";
   }
 
-  isImage(doc: DocumentData): boolean {
+  get isImage() {
     return (
-      doc.type.toLowerCase() === "image/jpeg" ||
-      doc.type.toLowerCase() === "image/png"
+      this.document.type.toLowerCase() === "image/jpeg" ||
+      this.document.type.toLowerCase() === "image/png"
     );
   }
 
-  openInTab(doc: DocumentData): void {
-    const blobUrl = this.toBlobUrl(doc.data, doc.type!);
+  openInTab(): void {
+    const blobUrl = this.blobUrl;
     const link = document.createElement("a");
     link.href = blobUrl;
-    link.setAttribute("download", doc.name!);
+    link.setAttribute("download", this.document.name!);
     document.body.appendChild(link);
     link.click();
   }
 
-  toBlobUrl(base64Data: any, contentType: string): string {
-    const byteCharacters = atob(
-      base64Data.substr(`data:${contentType};base64,`.length)
-    );
+  get blobUrl(): string {
+    const byteCharacters = this.byteCharacters;
+
     const byteArrays = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
@@ -140,10 +145,21 @@ export default class VFilePreview extends Vue {
 
       byteArrays.push(byteArray);
     }
-    const blob = new Blob(byteArrays, { type: contentType });
+    const blob = new Blob(byteArrays, { type: this.document.type });
     const blobUrl = URL.createObjectURL(blob);
 
     return blobUrl;
+  }
+
+  formatBytes(decimals = 2) {
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(this.document.size) / Math.log(k));
+
+    return parseFloat((this.document.size / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   @Emit('remove-document')
@@ -154,8 +170,10 @@ export default class VFilePreview extends Vue {
 </script>
 
 <style scoped>
-.removeButton {
+.remove-button {
   margin: 0;
+  background-color: #EEEEEE;
+  opacity: 70%;
 }
 
 .doc-card {
@@ -197,5 +215,8 @@ export default class VFilePreview extends Vue {
   margin-bottom: 0; 
   color: #AAAAAA; 
   font-size: 13px;
+  background-color: #EEEEEE;
+  opacity: 70%;
+  border-radius: 0 4px 0 0;
 }
 </style>

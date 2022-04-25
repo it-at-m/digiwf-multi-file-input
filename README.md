@@ -112,6 +112,8 @@ Make sure you have provided all the necessary dependencies in your vuetify proje
 Attention: the pdf preview component must be globally imported like this:
 ```
 import Vue2PdfEmbed from 'vue-pdf-embed/dist/vue2-pdf-embed.js';
+...
+Vue.component('Vue2PdfEmbed', Vue2PdfEmbed );
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>

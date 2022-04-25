@@ -1,6 +1,6 @@
 {
   "name": "@muenchen/digiwf-multi-file-input",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "DigiWF vuetify component for uploading files to and displaying from S3 storage",
   "license": "MIT",
   "main": "dist/digiwf-multi-file-input.ssr.js",
@@ -29,6 +29,7 @@
     "@types/mime": "^2.0.3",
     "axios": "^0.26.0",
     "mime": "^3.0.0",
+    "vue-pdf-embed": "^1.1.1",
     "vuetify": "^2.6.3"
   },
   "devDependencies": {

@@ -19,6 +19,7 @@
         <v-file-preview
           :document="doc"
           :key="doc.name"
+          :readonly="readonly"
           @remove-document="removeDocument"
         />
       </template>
@@ -51,10 +52,12 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
-  readonly = false;
 
   @Prop()
   valid: boolean | undefined;
+
+  @Prop()
+  readonly: boolean | undefined;
 
   @Prop()
   hasFocused: boolean | undefined;
@@ -106,7 +109,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   get isReadonly(): boolean {
-    return this.disabled || this.schema.readOnly || this.isLoading || !this.canAddDocument;
+    return this.disabled || this.readonly || this.schema.readOnly || this.isLoading || !this.canAddDocument;
   }
 
   get canAddDocument(): boolean {
@@ -211,7 +214,7 @@ export default class VMultiFileInput extends Vue {
     size?: number
   ) {
     if (!size) {
-      const content = atob(data.substr(`data:${type};base64,`.length));
+      const content = atob(data);
       size = content.length;
     }
     const doc: DocumentData = {
@@ -224,7 +227,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   toDataUrl(type: string, data: string): string {
-    const str = "data:" + type + ";base64, " + data;
+    const str = `data:${type};base64, ${data}`;
     return str;
   }
 

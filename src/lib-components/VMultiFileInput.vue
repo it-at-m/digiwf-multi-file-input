@@ -105,7 +105,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   get isReadonly(): boolean {
-    return this.disabled || this.schema.readOnly || this.isLoading;
+    return this.disabled || this.schema.readOnly || this.isLoading || !this.canAddDocument;
   }
 
   get canAddDocument(): boolean {

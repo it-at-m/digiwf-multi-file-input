@@ -51,6 +51,7 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
+  readonly = false;
 
   @Prop()
   valid: boolean | undefined;
@@ -349,7 +350,7 @@ export default class VMultiFileInput extends Vue {
     }
 
     this.errorMessage = '';
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
       try {

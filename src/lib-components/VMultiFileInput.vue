@@ -51,7 +51,6 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
-  readonly = false;
 
   @Prop()
   valid: boolean | undefined;
@@ -98,7 +97,6 @@ export default class VMultiFileInput extends Vue {
   }
 
   created(): void {
-    this.readonly = this.schema.readOnly;
     if (!this.formContext.id) {
       this.errorMessage = "no contextId";
       return;
@@ -107,7 +105,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   get isReadonly(): boolean {
-    return this.disabled || this.readonly || this.isLoading;
+    return this.disabled || this.schema.readOnly || this.isLoading;
   }
 
   get canAddDocument(): boolean {

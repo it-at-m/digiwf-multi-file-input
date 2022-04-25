@@ -409,5 +409,6 @@ export default class VMultiFileInput extends Vue {
   margin-bottom: 26px;
   float: left;
   display: flex;
+  flex-wrap: wrap;
 }
 </style>

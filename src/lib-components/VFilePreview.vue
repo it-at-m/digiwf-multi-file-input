@@ -1,7 +1,7 @@
 <template>
   <div>
     <a target="_blank" @click="openInTab()">
-      <v-card class="doc-card" elevation="2" outlined max-width="350px">
+      <v-card class="doc-card mb-2" elevation="2" outlined max-width="350px">
         <v-card-title class="text-subtitle-1 title">
           <div class="d-flex align-start flex-row">
             <v-icon left size="30" class="mr-2">

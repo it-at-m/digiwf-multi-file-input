@@ -350,6 +350,8 @@ export default class VMultiFileInput extends Vue {
       return;
     }
 
+    this.errorMessage = '';
+    
     const reader = new FileReader();
     reader.onload = (event) => {
       try {

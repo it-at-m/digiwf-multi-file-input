@@ -1,43 +1,50 @@
 <template>
   <div>
-    <v-card class="doc-card" elevation="2" outlined>
-      <v-card-title class="text-subtitle-1 title">
-        <div class="d-flex align-start flex-row">
-          <v-icon left size="30" class="mr-2">
-            {{ icon }}
-          </v-icon>
-          {{ document.name }}
-        </div>
-      </v-card-title>
-      <div class="linkbox">
-        <a target="_blank" @click="openInTab()">
-          <v-img
-            v-if="isImage"
-            class="linkbox-img"
-            :src="document.data"
-            height="200"
-            width="200"
-            alt="Image preview..."
-          >
-          </v-img>
-          <vue2-pdf-embed v-else :source="document.data" class="linkbox-pdf" />
-        </a>
-        <div>
-          <div class="footer">{{ formatBytes(0) }}</div>
-          <template v-if="!readonly">
-            <v-btn
-              class="remove-button ma-1"
-              style="position: absolute; right: 0; bottom: 0"
-              elevation="1"
-              icon
-              @click="removeDocument"
+    <a target="_blank" @click="openInTab()">
+      <v-card class="doc-card" elevation="2" outlined max-width="350px">
+        <v-card-title class="text-subtitle-1 title">
+          <div class="d-flex align-start flex-row">
+            <v-icon left size="30" class="mr-2">
+              {{ icon }}
+            </v-icon>
+            {{ document.name }}
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <div class="preview">
+            <v-img
+              v-if="isImage"
+              class="preview-component"
+              :src="document.data"
+              max-width="200px"
+              alt="Image preview..."
             >
-              <v-icon> mdi-delete </v-icon>
-            </v-btn>
-          </template>
-        </div>
-      </div>
-    </v-card>
+            </v-img>
+
+            <vue2-pdf-embed
+              v-else-if="document.type === 'application/pdf'"
+              :source="document.data"
+              class="preview-component"
+            />
+
+            <div v-else class="preview-text">Keine Vorschau verfügbar</div>
+            <div>
+              <div class="footer">{{ formatBytes(0) }}</div>
+              <template v-if="!readonly">
+                <v-btn
+                  class="remove-button ma-1"
+                  elevation="1"
+                  icon
+                  @click.stop="removeDocument"
+                >
+                  <v-icon> mdi-delete </v-icon>
+                </v-btn>
+              </template>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </a>
   </div>
 </template>
 
@@ -173,6 +180,9 @@ export default class VFilePreview extends Vue {
   margin: 0;
   background-color: #eeeeee;
   opacity: 70%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .doc-card {
@@ -185,26 +195,26 @@ export default class VFilePreview extends Vue {
   background: #eeeeee;
 }
 
-.linkbox {
+.preview {
   margin: 2px 2px 2px 2px;
   padding: 5px;
 }
 
-.linkbox:hover {
+.v-card:hover {
   background-color: #fafafa;
 }
 
-.linkbox-img {
+.preview-component {
   margin-left: auto;
   margin-right: auto;
 }
 
-.linkbox-pdf {
-  max-width: 200px;
-  max-height: 200px;
-  overflow: hidden;
-  margin-left: auto;
-  margin-right: auto;
+.preview-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 40px;
+  color: #aaaaaa;
 }
 
 .footer {

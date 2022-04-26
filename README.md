@@ -103,10 +103,17 @@ Run the following commands in your library:
 2. `npm run build`
 3. `npm pack`
 
-Make sure you have provided all the necessary dependencies in your vuetify project and add the library vai `file path`:
+Make sure you have provided all the necessary dependencies in your vuetify project and add the library via `file path`:
  
 ```
 "digiwf-multi-file-input": "file:../digiwf-multi-file-input-1.0.1.tgz"
+```
+
+Attention: the pdf preview component must be globally imported like this:
+```
+import Vue2PdfEmbed from 'vue-pdf-embed/dist/vue2-pdf-embed.js';
+...
+Vue.component('Vue2PdfEmbed', Vue2PdfEmbed );
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -115,13 +122,7 @@ Make sure you have provided all the necessary dependencies in your vuetify proje
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-The template has several functionalities that can be configured.
-
-1. Clone or fork the repository
-2. Adjust the parameters in the package.json (name, description, repository etc.)
-3. Build locally or publish it via GitHub Action
-
-There is already a ready-to-use GitHub action in the project to publish projects on npmjs.com
+See 'serve.vue' for usage.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

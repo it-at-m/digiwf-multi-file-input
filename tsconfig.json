@@ -12,6 +12,8 @@
         "experimentalDecorators": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "noImplicitAny": false,
         "sourceMap": true,
         "baseUrl": ".",
         "newLine": "lf",

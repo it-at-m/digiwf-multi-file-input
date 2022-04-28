@@ -19,7 +19,7 @@
         <v-file-preview
           :document="doc"
           :key="doc.name"
-          :readonly="readonly"
+          :readonly="disabled || readonly || schema.readOnly"
           @remove-document="removeDocument"
         />
       </template>

@@ -366,7 +366,7 @@ export default class VMultiFileInput extends Vue {
         }
       };
         reader.readAsArrayBuffer(file);
-    });    
+    });
   }
 
   async removeDocument(document: DocumentData): Promise<void> {

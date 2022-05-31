@@ -6,6 +6,7 @@
       :rules="rules ? rules : true"
       :loading="isLoading"
       outlined
+      multiple
       :label="label"
       type="file"
       truncate-length="50"
@@ -47,7 +48,7 @@ import VFilePreview from "@/lib-components/VFilePreview.vue";
 })
 export default class VMultiFileInput extends Vue {
   model = "";
-  fileValue: File | null = null;
+  fileValue: File[] | null = null;
   data: any = {};
   documents: DocumentData[] = [];
   errorMessage = "";
@@ -128,7 +129,8 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "";
       if (this.documents.length > 0) {
         // set dummy value to satisfy "required"-rule
-        this.fileValue = new File([""], this.documents[0].name);
+        this.fileValue = [];
+        this.fileValue.push(new File([""], this.documents[0].name));
         this.input(this.documents);
       }
     } catch (error) {
@@ -158,7 +160,7 @@ export default class VMultiFileInput extends Vue {
     return mimetype ? mimetype : "plain/text";
   }
 
-  async addDocument(mydata: any): Promise<void> {
+  async addDocument(mydata: any, file: File): Promise<void> {
     const startTime = new Date().getTime();
     this.isLoading = true;
 
@@ -168,12 +170,12 @@ export default class VMultiFileInput extends Vue {
       this.validateFileSize(mydata);
 
       const base64 = this.arrayBufferToBase64(mydata);
-      const presignedUrl = await this.getPresignedUrlForPost();
+      const presignedUrl = await this.getPresignedUrlForPost(file);
       await globalAxios.put(presignedUrl, base64);
 
       const doc = this.createDocumentDataInstance(
-        this.fileValue!.name,
-        this.fileValue!.type,
+        file!.name,
+        file!.type,
         base64,
         mydata.byteLength
       );
@@ -267,7 +269,7 @@ export default class VMultiFileInput extends Vue {
     return key;
   }
 
-  async getPresignedUrlForPost(): Promise<string> {
+  async getPresignedUrlForPost(file: File): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
@@ -279,7 +281,7 @@ export default class VMultiFileInput extends Vue {
       ).getPresignedUrlForFileUpload1(
         this.formContext.id,
         this.getFullKey(),
-        this.fileValue!.name
+        file!.name
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(
@@ -287,7 +289,7 @@ export default class VMultiFileInput extends Vue {
       ).getPresignedUrlForFileUpload(
         this.formContext.id,
         this.getFullKey(),
-        this.fileValue!.name
+        file!.name
       );
     }
 
@@ -354,16 +356,17 @@ export default class VMultiFileInput extends Vue {
 
     this.errorMessage = '';
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        this.addDocument(event.target?.result);
-      } catch (e: any) {
-        this.errorMessage = e.message;
-      }
-    };
-
-    reader.readAsArrayBuffer(this.fileValue);
+    this.fileValue.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          this.addDocument(event.target?.result, file);
+        } catch (e: any) {
+          this.errorMessage = e.message;
+        }
+      };
+        reader.readAsArrayBuffer(file);
+    });    
   }
 
   async removeDocument(document: DocumentData): Promise<void> {

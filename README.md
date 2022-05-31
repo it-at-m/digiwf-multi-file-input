@@ -106,7 +106,7 @@ Run the following commands in your library:
 Make sure you have provided all the necessary dependencies in your vuetify project and add the library via `file path`:
  
 ```
-"digiwf-multi-file-input": "file:../digiwf-multi-file-input-1.0.1.tgz"
+"@muenchen/digiwf-multi-file-input": "file:../../digiwf-multi-file-input/muenchen-digiwf-multi-file-input-1.2.0.tgz"
 ```
 
 Attention: the pdf preview component must be globally imported like this:

@@ -13,7 +13,18 @@
       :error-messages="errorMessage"
       v-bind="schema['x-props']"
       @change="changeInput"
-    />
+    >
+      <template #append-outer>
+        <v-tooltip v-if="htmlDescription" left :open-on-hover="false">
+          <template v-slot:activator="{ on }">
+            <v-btn icon @click="on.click" @blur="on.blur" retain-focus-on-click>
+              <v-icon> mdi-information </v-icon>
+            </v-btn>
+          </template>
+          <span style="max-width: 200px" v-html="htmlDescription"></span>
+        </v-tooltip>
+      </template>
+    </VFileInput>
 
     <div v-if="documents && documents.length > 0" class="listWrapper">
       <template v-for="doc in documents">
@@ -110,7 +121,13 @@ export default class VMultiFileInput extends Vue {
   }
 
   get isReadonly(): boolean {
-    return this.disabled || this.readonly || this.schema.readOnly || this.isLoading || !this.canAddDocument;
+    return (
+      this.disabled ||
+      this.readonly ||
+      this.schema.readOnly ||
+      this.isLoading ||
+      !this.canAddDocument
+    );
   }
 
   get canAddDocument(): boolean {
@@ -354,7 +371,7 @@ export default class VMultiFileInput extends Vue {
       return;
     }
 
-    this.errorMessage = '';
+    this.errorMessage = "";
 
     this.fileValue.forEach((file) => {
       const reader = new FileReader();
@@ -365,7 +382,7 @@ export default class VMultiFileInput extends Vue {
           this.errorMessage = e.message;
         }
       };
-        reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(file);
     });
   }
 

@@ -4,7 +4,7 @@
     <VMultiFileInput
       color="primary"
       :schema="{}"
-      htmlDescription="Dies ist eine Beschreibung, eine superlange Beschreibung, die in kein Feld jemals passen wird."
+      htmlDescription="<p>Dies ist eine Beschreibung.</p>"
       fullKey="allOf-0.allOf-0.antragsdaten.datumAntragstellung.currentOneOf.FormField03"
       :rules="['Required']"
       label="File"

@@ -21,7 +21,7 @@
               <v-icon> mdi-information </v-icon>
             </v-btn>
           </template>
-          <span style="max-width: 200px" v-html="htmlDescription"></span>
+          <div class="tooltip" v-html="htmlDescription"></div>
         </v-tooltip>
       </template>
     </VFileInput>
@@ -434,5 +434,9 @@ export default class VMultiFileInput extends Vue {
   float: left;
   display: flex;
   flex-wrap: wrap;
+}
+
+.tooltip {
+   max-width:200px;
 }
 </style>

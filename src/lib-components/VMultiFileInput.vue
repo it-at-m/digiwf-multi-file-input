@@ -2,7 +2,7 @@
   <div class="pa-0">
     <VFileInput
       v-model="fileValue"
-      :disabled="isReadonly"
+      :disabled="isReadonly || !this.canAddDocument"
       :rules="rules ? rules : true"
       :loading="isLoading"
       outlined
@@ -31,7 +31,7 @@
         <v-file-preview
           :document="doc"
           :key="doc.name"
-          :readonly="disabled || readonly || schema.readOnly"
+          :readonly="isReadonly"
           @remove-document="removeDocument"
         />
       </template>
@@ -125,8 +125,7 @@ export default class VMultiFileInput extends Vue {
       this.disabled ||
       this.readonly ||
       this.schema.readOnly ||
-      this.isLoading ||
-      !this.canAddDocument
+      this.isLoading 
     );
   }
 

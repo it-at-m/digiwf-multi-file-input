@@ -15,13 +15,13 @@
       @change="changeInput"
     >
       <template #append-outer>
-        <v-tooltip v-if="htmlDescription" left :open-on-hover="false">
+        <v-tooltip v-if="schema.description" left :open-on-hover="false">
           <template v-slot:activator="{ on }">
             <v-btn icon @click="on.click" @blur="on.blur" retain-focus-on-click>
               <v-icon> mdi-information </v-icon>
             </v-btn>
           </template>
-          <div class="tooltip" v-html="htmlDescription"></div>
+          <div class="tooltip">{{schema.description}}</div>
         </v-tooltip>
       </template>
     </VFileInput>
@@ -91,9 +91,6 @@ export default class VMultiFileInput extends Vue {
 
   @Prop()
   label: string | undefined;
-
-  @Prop()
-  htmlDescription: string | undefined;
 
   @Prop()
   disabled: boolean | undefined;

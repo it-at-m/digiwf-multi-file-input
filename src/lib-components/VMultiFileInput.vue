@@ -2,24 +2,36 @@
   <div class="pa-0">
     <VFileInput
       v-model="fileValue"
-      :disabled="isReadonly"
+      :disabled="isReadonly || !this.canAddDocument"
       :rules="rules ? rules : true"
       :loading="isLoading"
       outlined
+      multiple
       :label="label"
       type="file"
       truncate-length="50"
       :error-messages="errorMessage"
       v-bind="schema['x-props']"
       @change="changeInput"
-    />
+    >
+      <template #append-outer>
+        <v-tooltip v-if="schema.description" left :open-on-hover="false">
+          <template v-slot:activator="{ on }">
+            <v-btn icon @click="on.click" @blur="on.blur" retain-focus-on-click>
+              <v-icon> mdi-information </v-icon>
+            </v-btn>
+          </template>
+          <div class="tooltip">{{schema.description}}</div>
+        </v-tooltip>
+      </template>
+    </VFileInput>
 
     <div v-if="documents && documents.length > 0" class="listWrapper">
       <template v-for="doc in documents">
         <v-file-preview
           :document="doc"
           :key="doc.name"
-          :readonly="readonly"
+          :readonly="isReadonly"
           @remove-document="removeDocument"
         />
       </template>
@@ -47,7 +59,7 @@ import VFilePreview from "@/lib-components/VFilePreview.vue";
 })
 export default class VMultiFileInput extends Vue {
   model = "";
-  fileValue: File | null = null;
+  fileValue: File[] | null = null;
   data: any = {};
   documents: DocumentData[] = [];
   errorMessage = "";
@@ -81,9 +93,6 @@ export default class VMultiFileInput extends Vue {
   label: string | undefined;
 
   @Prop()
-  htmlDescription: string | undefined;
-
-  @Prop()
   disabled: boolean | undefined;
 
   @Prop()
@@ -109,7 +118,12 @@ export default class VMultiFileInput extends Vue {
   }
 
   get isReadonly(): boolean {
-    return this.disabled || this.readonly || this.schema.readOnly || this.isLoading || !this.canAddDocument;
+    return (
+      this.disabled ||
+      this.readonly ||
+      this.schema.readOnly ||
+      this.isLoading 
+    );
   }
 
   get canAddDocument(): boolean {
@@ -128,7 +142,8 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "";
       if (this.documents.length > 0) {
         // set dummy value to satisfy "required"-rule
-        this.fileValue = new File([""], this.documents[0].name);
+        this.fileValue = [];
+        this.fileValue.push(new File([""], this.documents[0].name));
         this.input(this.documents);
       }
     } catch (error) {
@@ -158,7 +173,7 @@ export default class VMultiFileInput extends Vue {
     return mimetype ? mimetype : "plain/text";
   }
 
-  async addDocument(mydata: any): Promise<void> {
+  async addDocument(mydata: any, file: File): Promise<void> {
     const startTime = new Date().getTime();
     this.isLoading = true;
 
@@ -168,12 +183,12 @@ export default class VMultiFileInput extends Vue {
       this.validateFileSize(mydata);
 
       const base64 = this.arrayBufferToBase64(mydata);
-      const presignedUrl = await this.getPresignedUrlForPost();
+      const presignedUrl = await this.getPresignedUrlForPost(file);
       await globalAxios.put(presignedUrl, base64);
 
       const doc = this.createDocumentDataInstance(
-        this.fileValue!.name,
-        this.fileValue!.type,
+        file!.name,
+        file!.type,
         base64,
         mydata.byteLength
       );
@@ -267,7 +282,7 @@ export default class VMultiFileInput extends Vue {
     return key;
   }
 
-  async getPresignedUrlForPost(): Promise<string> {
+  async getPresignedUrlForPost(file: File): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
     cfg.baseOptions.headers = { "Content-Type": "application/json" };
     cfg.basePath += "/" + this.apiEndpoint;
@@ -279,7 +294,7 @@ export default class VMultiFileInput extends Vue {
       ).getPresignedUrlForFileUpload1(
         this.formContext.id,
         this.getFullKey(),
-        this.fileValue!.name
+        file!.name
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(
@@ -287,7 +302,7 @@ export default class VMultiFileInput extends Vue {
       ).getPresignedUrlForFileUpload(
         this.formContext.id,
         this.getFullKey(),
-        this.fileValue!.name
+        file!.name
       );
     }
 
@@ -352,18 +367,19 @@ export default class VMultiFileInput extends Vue {
       return;
     }
 
-    this.errorMessage = '';
+    this.errorMessage = "";
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        this.addDocument(event.target?.result);
-      } catch (e: any) {
-        this.errorMessage = e.message;
-      }
-    };
-
-    reader.readAsArrayBuffer(this.fileValue);
+    this.fileValue.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          this.addDocument(event.target?.result, file);
+        } catch (e: any) {
+          this.errorMessage = e.message;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
   }
 
   async removeDocument(document: DocumentData): Promise<void> {
@@ -414,5 +430,9 @@ export default class VMultiFileInput extends Vue {
   float: left;
   display: flex;
   flex-wrap: wrap;
+}
+
+.tooltip {
+   max-width:200px;
 }
 </style>

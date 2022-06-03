@@ -134,7 +134,6 @@ export default class VMultiFileInput extends Vue {
       // get filenames
       const filenames = await this.getFilenames();
       for (const filename of filenames) {
-        console.log("loadFile: " + filename);
         await this.loadFile(filename);
       }
       this.errorMessage = "";
@@ -194,14 +193,15 @@ export default class VMultiFileInput extends Vue {
 
       this.validateFileSize(mydata);
 
-      const base64 = this.base64OfString(mydata);
       const presignedUrl = await this.getPresignedUrlForPost(file);
-      await globalAxios.put(presignedUrl, base64);
+      await globalAxios.put(presignedUrl, mydata);
+
+      let content = this.arrayBufferToString(mydata);
 
       const doc = this.createDocumentDataInstance(
         file!.name,
         file!.type,
-        base64,
+        this.base64OfString(content),
         mydata.byteLength
       );
 

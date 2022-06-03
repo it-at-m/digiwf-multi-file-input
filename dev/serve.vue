@@ -3,9 +3,8 @@
     <v-form ref="form">
     <VMultiFileInput
       color="primary"
-      :schema="{}"
-      htmlDescription="<p>Dies ist eine Beschreibung.</p>"
-      fullKey="allOf-0.allOf-0.antragsdaten.datumAntragstellung.currentOneOf.FormField03"
+      :schema='{"description": "Dies ist eine Beschreibung."}'
+      fullKey="FormField_Datei"
       :rules="['Required']"
       label="File"
     ></VMultiFileInput>

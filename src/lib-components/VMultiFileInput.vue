@@ -122,7 +122,7 @@ export default class VMultiFileInput extends Vue {
       this.disabled ||
       this.readonly ||
       this.schema.readOnly ||
-      this.isLoading 
+      this.isLoading
     );
   }
 
@@ -157,15 +157,28 @@ export default class VMultiFileInput extends Vue {
     const presignedUrl = await this.getPresignedUrlForGet(filename);
 
     // get file content
-    const res = await globalAxios.get(presignedUrl);
+    const res = await globalAxios.get(presignedUrl, {
+      responseType: "arraybuffer",
+    });
+    let content = this.arrayBufferToString(res.data);
+    let size = this.getEncodedContentSize(content);
 
     // push data
     const doc = this.createDocumentDataInstance(
       filename,
       this.getMimeType(filename),
-      res.data
+      this.base64OfString(content),
+      size
     );
     this.documents.push(doc);
+  }
+
+  getEncodedContentSize(content: string) {
+    if (this.isBase64Encoded(content)) { // deprecated: Files are no longer serialized in Base64 encoding
+      let decoded = window.atob(content);
+      return decoded.length;
+    }
+    return content.length;
   }
 
   getMimeType(filename: string): string {
@@ -182,14 +195,15 @@ export default class VMultiFileInput extends Vue {
 
       this.validateFileSize(mydata);
 
-      const base64 = this.arrayBufferToBase64(mydata);
       const presignedUrl = await this.getPresignedUrlForPost(file);
-      await globalAxios.put(presignedUrl, base64);
+      await globalAxios.put(presignedUrl, mydata);
+
+      let content = this.arrayBufferToString(mydata);
 
       const doc = this.createDocumentDataInstance(
         file!.name,
         file!.type,
-        base64,
+        this.base64OfString(content),
         mydata.byteLength
       );
 
@@ -226,17 +240,13 @@ export default class VMultiFileInput extends Vue {
     name: string,
     type: string,
     data: string,
-    size?: number
+    size: number
   ) {
-    if (!size) {
-      const content = atob(data);
-      size = content.length;
-    }
     const doc: DocumentData = {
       type: type,
       name: name,
       data: this.toDataUrl(type, data),
-      size: size,
+      size: size!,
     };
     return doc;
   }
@@ -404,14 +414,27 @@ export default class VMultiFileInput extends Vue {
     this.input(this.documents);
   }
 
-  arrayBufferToBase64(buffer: ArrayBuffer) {
-    let binary = "";
+  base64OfString(content: string) {
+    if (this.isBase64Encoded(content)) { // deprecated: Files are no longer serialized in Base64 encoding
+      return content;
+    }
+    return window.btoa(content);
+  }
+
+  arrayBufferToString(buffer: ArrayBuffer) {
+    let content = "";
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      content += String.fromCharCode(bytes[i]);
     }
-    return window.btoa(binary);
+    return content;
+  }
+
+  isBase64Encoded(content: string) {
+    var base64Regex =
+      /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+    return base64Regex.test(content);
   }
 }
 </script>

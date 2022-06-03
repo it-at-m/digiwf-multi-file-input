@@ -21,7 +21,7 @@
               <v-icon> mdi-information </v-icon>
             </v-btn>
           </template>
-          <div class="tooltip">{{ schema.description }}</div>
+          <div class="tooltip">{{schema.description}}</div>
         </v-tooltip>
       </template>
     </VFileInput>
@@ -119,7 +119,10 @@ export default class VMultiFileInput extends Vue {
 
   get isReadonly(): boolean {
     return (
-      this.disabled || this.readonly || this.schema.readOnly || this.isLoading
+      this.disabled ||
+      this.readonly ||
+      this.schema.readOnly ||
+      this.isLoading
     );
   }
 
@@ -453,6 +456,6 @@ export default class VMultiFileInput extends Vue {
 }
 
 .tooltip {
-  max-width: 200px;
+   max-width:200px;
 }
 </style>

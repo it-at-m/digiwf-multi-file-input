@@ -171,8 +171,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   getEncodedContentSize(content: string) {
-    if (this.isBase64Encoded(content)) {
-      // deprecated
+    if (this.isBase64Encoded(content)) { // deprecated: Files are no longer serialized in Base64 encoding
       let decoded = window.atob(content);
       return decoded.length;
     }
@@ -413,7 +412,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   base64OfString(content: string) {
-    if (this.isBase64Encoded(content)) {
+    if (this.isBase64Encoded(content)) { // deprecated: Files are no longer serialized in Base64 encoding
       return content;
     }
     return window.btoa(content);
@@ -457,6 +456,3 @@ export default class VMultiFileInput extends Vue {
   max-width: 200px;
 }
 </style>
-
-function isBase64Encoded(content: string) { throw new Error("Function not
-implemented."); }

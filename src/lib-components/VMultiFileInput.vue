@@ -224,7 +224,7 @@ export default class VMultiFileInput extends Vue {
       ) {
         this.errorMessage = "Das Dokument existiert bereits.";
       } else if (!this.errorMessage) {
-        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.: ";
+        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.";
       }
       setTimeout(() => {
         this.isLoading = false;

@@ -458,4 +458,9 @@ export default class VMultiFileInput extends Vue {
 .tooltip {
    max-width:200px;
 }
+
+.v-input--is-disabled:not(.v-input--is-readonly) {
+    pointer-events: all;
+}
+
 </style>

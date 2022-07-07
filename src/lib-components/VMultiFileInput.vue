@@ -130,6 +130,10 @@ export default class VMultiFileInput extends Vue {
     return this.documents.length < 10;
   }
 
+  get filePath(): string {
+    return this.schema.filePath ? this.schema.filePath : '';
+  }
+
   async loadInitialValues() {
     try {
       this.isLoading = true;
@@ -220,7 +224,7 @@ export default class VMultiFileInput extends Vue {
       ) {
         this.errorMessage = "Das Dokument existiert bereits.";
       } else if (!this.errorMessage) {
-        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.: ";
+        this.errorMessage = "Das Dokument konnte nicht hochgeladen werden.";
       }
       setTimeout(() => {
         this.isLoading = false;
@@ -265,31 +269,16 @@ export default class VMultiFileInput extends Vue {
     if (this.formContext.type === "start") {
       res = await ServiceStartFileRestControllerApiFactory(cfg).getFileNames1(
         this.formContext.id,
-        this.getFullKey()
+        this.filePath
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(cfg).getFileNames(
         this.formContext.id,
-        this.getFullKey()
+        this.filePath
       );
     }
 
     return res.data;
-  }
-
-  /* Manipulates the fullKey of the schema field so it can be evaluated
-   * as a path for security reasons.
-   *
-   * example:
-   * input: allOf-0.allOf-0.antragsdaten.datumAntragstellung.currentOneOf.stringProp2
-   * output: antragsdaten.datumAntragstellung.stringProp2
-   */
-  getFullKey(): string {
-    let key = this.fullKey!.replaceAll("currentOneOf.", "");
-    while (key.startsWith("allOf")) {
-      key = key.substr(key.indexOf(".") + 1);
-    }
-    return key;
   }
 
   async getPresignedUrlForPost(file: File): Promise<string> {
@@ -303,16 +292,16 @@ export default class VMultiFileInput extends Vue {
         cfg
       ).getPresignedUrlForFileUpload1(
         this.formContext.id,
-        this.getFullKey(),
-        file!.name
+        file!.name,
+        this.filePath
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(
         cfg
       ).getPresignedUrlForFileUpload(
         this.formContext.id,
-        this.getFullKey(),
-        file!.name
+        file!.name,
+        this.filePath
       );
     }
 
@@ -330,16 +319,16 @@ export default class VMultiFileInput extends Vue {
         cfg
       ).getPresignedUrlForFileDownload1(
         this.formContext.id,
-        this.getFullKey(),
-        filename
+        filename,
+        this.filePath
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(
         cfg
       ).getPresignedUrlForFileDownload(
         this.formContext.id,
-        this.getFullKey(),
-        filename
+        filename,
+        this.filePath
       );
     }
 
@@ -356,16 +345,16 @@ export default class VMultiFileInput extends Vue {
         cfg
       ).getPresignedUrlForFileDeletion1(
         this.formContext.id,
-        this.getFullKey(),
-        filename
+        filename,
+        this.filePath
       );
     } else {
       res = await HumanTaskFileRestControllerApiFactory(
         cfg
       ).getPresignedUrlForFileDeletion(
         this.formContext.id,
-        this.getFullKey(),
-        filename
+        filename,
+        this.filePath
       );
     }
 

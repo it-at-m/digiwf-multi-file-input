@@ -3,7 +3,7 @@
     <v-form ref="form">
     <VMultiFileInput
       color="primary"
-      :schema='{"description": "Dies ist eine Beschreibung."}'
+      :schema='{"description": "Dies ist eine Beschreibung.", "filePath": "/Documents/"}'
       fullKey="FormField_Datei"
       :rules="['Required']"
       label="File"

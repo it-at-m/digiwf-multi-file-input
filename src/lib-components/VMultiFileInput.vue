@@ -64,6 +64,7 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
+  generatedUUID = "";
 
   @Prop()
   valid: boolean | undefined;
@@ -75,7 +76,7 @@ export default class VMultiFileInput extends Vue {
   hasFocused: boolean | undefined;
 
   @Prop()
-  value: string | undefined;
+  value: any | undefined;
 
   @Prop()
   options: any;
@@ -106,6 +107,19 @@ export default class VMultiFileInput extends Vue {
 
   @Emit()
   input(value: any): any {
+    if(!this.schema.) {
+      return  { amount : value}
+    }
+
+    if(this.value && this.value.key) {
+      return {
+        ...this.value,
+        amount: value
+      }
+    }
+
+    return
+
     return value;
   }
 
@@ -131,8 +145,14 @@ export default class VMultiFileInput extends Vue {
   }
 
   get filePath(): string {
-    return this.schema.filePath ? this.schema.filePath : '';
+    let path = this.schema.filePath ? this.schema.filePath : '';
+
+    if(this.schema)
+
+    return path;
   }
+
+
 
   async loadInitialValues() {
     try {
@@ -148,7 +168,7 @@ export default class VMultiFileInput extends Vue {
         // set dummy value to satisfy "required"-rule
         this.fileValue = [];
         this.fileValue.push(new File([""], this.documents[0].name));
-        this.input(this.documents);
+        this.input(this.documents.length);
       }
     } catch (error) {
       this.errorMessage = "Die Dateien konnten nicht geladen werden.";
@@ -215,7 +235,7 @@ export default class VMultiFileInput extends Vue {
 
       this.errorMessage = "";
       this.isLoading = false;
-      this.input(this.documents);
+      this.input(this.documents.length);
     } catch (error: any) {
       if (
         error.response &&
@@ -400,7 +420,7 @@ export default class VMultiFileInput extends Vue {
         }
       }
     }
-    this.input(this.documents);
+    this.input(this.documents.length);
   }
 
   base64OfString(content: string) {

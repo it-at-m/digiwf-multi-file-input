@@ -18,10 +18,10 @@
         <v-tooltip v-if="schema.description" left :open-on-hover="false">
           <template v-slot:activator="{ on }">
             <v-btn icon @click="on.click" @blur="on.blur" retain-focus-on-click>
-              <v-icon> mdi-information </v-icon>
+              <v-icon> mdi-information</v-icon>
             </v-btn>
           </template>
-          <div class="tooltip">{{schema.description}}</div>
+          <div class="tooltip">{{ schema.description }}</div>
         </v-tooltip>
       </template>
     </VFileInput>
@@ -49,10 +49,11 @@ import mime from "mime";
 import globalAxios from "axios";
 import {DocumentData, FormContext} from "@/lib-components/types";
 import VFilePreview from "@/lib-components/VFilePreview.vue";
+import {v4 as uuidv4} from 'uuid';
 
 @Component({
   name: "VMultiFileInput",
-  components: { VFileInput, VFilePreview },
+  components: {VFileInput, VFilePreview},
 })
 export default class VMultiFileInput extends Vue {
   model = "";
@@ -105,8 +106,8 @@ export default class VMultiFileInput extends Vue {
   @Emit()
   input(value: any): any {
     //return without uuid if not enabled
-    if(!this.schema.uuidEnabled) {
-      return  { amount : value}
+    if (!this.schema.uuidEnabled) {
+      return {amount: value}
     }
 
     return {
@@ -122,11 +123,11 @@ export default class VMultiFileInput extends Vue {
     }
 
     //initialize uuid if enabled
-    if(this.schema.uuidEnabled) {
-      if(this.value && this.value.key) {
+    if (this.schema.uuidEnabled) {
+      if (this.value && this.value.key) {
         this.uuid = this.value.key;
       } else {
-        this.uuid = this.generateUUID();
+        this.uuid = uuidv4();
       }
     }
 
@@ -150,8 +151,8 @@ export default class VMultiFileInput extends Vue {
     let path = this.schema.filePath ? this.schema.filePath : '';
 
     //append uuid to path if enabled
-    if(this.schema.uuidEnabled) {
-      path = path !== '' ? path+"/"+this.uuid : this.uuid;
+    if (this.schema.uuidEnabled) {
+      path = path !== '' ? path + "/" + this.uuid : this.uuid;
     }
 
     return path;
@@ -214,17 +215,17 @@ export default class VMultiFileInput extends Vue {
   }
 
   //generate uuid
-   generateUUID() : string {
+  generateUUID(): string {
     let d = new Date().getTime();
-    let d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now() * 1000)) || 0;
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       let r = Math.random() * 16;
-      if(d > 0){
-        r = (d + r)%16 | 0;
-        d = Math.floor(d/16);
+      if (d > 0) {
+        r = (d + r) % 16 | 0;
+        d = Math.floor(d / 16);
       } else {
-        r = (d2 + r)%16 | 0;
-        d2 = Math.floor(d2/16);
+        r = (d2 + r) % 16 | 0;
+        d2 = Math.floor(d2 / 16);
       }
       return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
@@ -302,7 +303,7 @@ export default class VMultiFileInput extends Vue {
 
   async getFilenames(): Promise<string[]> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -323,7 +324,7 @@ export default class VMultiFileInput extends Vue {
 
   async getPresignedUrlForPost(file: File): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -350,7 +351,7 @@ export default class VMultiFileInput extends Vue {
 
   async getPresignedUrlForGet(filename: string): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -485,11 +486,11 @@ export default class VMultiFileInput extends Vue {
 }
 
 .tooltip {
-   max-width:200px;
+  max-width: 200px;
 }
 
 .v-input--is-disabled:not(.v-input--is-readonly) {
-    pointer-events: all;
+  pointer-events: all;
 }
 
 </style>

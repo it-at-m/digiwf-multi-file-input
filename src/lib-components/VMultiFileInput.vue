@@ -18,10 +18,10 @@
         <v-tooltip v-if="schema.description" left :open-on-hover="false">
           <template v-slot:activator="{ on }">
             <v-btn icon @click="on.click" @blur="on.blur" retain-focus-on-click>
-              <v-icon> mdi-information </v-icon>
+              <v-icon> mdi-information</v-icon>
             </v-btn>
           </template>
-          <div class="tooltip">{{schema.description}}</div>
+          <div class="tooltip">{{ schema.description }}</div>
         </v-tooltip>
       </template>
     </VFileInput>
@@ -41,21 +41,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Inject, Prop, Vue } from "vue-property-decorator";
-import { VFileInput } from "vuetify/lib/components";
-import {
-  HumanTaskFileRestControllerApiFactory,
-  ServiceStartFileRestControllerApiFactory,
-} from "@/api/api-client/api";
+import {Component, Emit, Inject, Prop, Vue} from "vue-property-decorator";
+import {VFileInput} from "vuetify/lib/components";
+import {HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory,} from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
-import { DocumentData, FormContext } from "@/lib-components/types";
+import {DocumentData, FormContext} from "@/lib-components/types";
 import VFilePreview from "@/lib-components/VFilePreview.vue";
+import {v4 as uuidv4} from 'uuid';
 
 @Component({
   name: "VMultiFileInput",
-  components: { VFileInput, VFilePreview },
+  components: {VFileInput, VFilePreview},
 })
 export default class VMultiFileInput extends Vue {
   model = "";
@@ -64,6 +62,7 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
+  uuid = "";
 
   @Prop()
   valid: boolean | undefined;
@@ -75,7 +74,7 @@ export default class VMultiFileInput extends Vue {
   hasFocused: boolean | undefined;
 
   @Prop()
-  value: string | undefined;
+  value: any | undefined;
 
   @Prop()
   options: any;
@@ -106,7 +105,15 @@ export default class VMultiFileInput extends Vue {
 
   @Emit()
   input(value: any): any {
-    return value;
+    //return without uuid if not enabled
+    if (!this.schema.uuidEnabled) {
+      return {amount: value}
+    }
+
+    return {
+      key: this.uuid,
+      amount: value
+    };
   }
 
   created(): void {
@@ -114,6 +121,16 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "no contextId";
       return;
     }
+
+    //initialize uuid if enabled
+    if (this.schema.uuidEnabled) {
+      if (this.value && this.value.key) {
+        this.uuid = this.value.key;
+      } else {
+        this.uuid = uuidv4();
+      }
+    }
+
     this.loadInitialValues();
   }
 
@@ -131,7 +148,14 @@ export default class VMultiFileInput extends Vue {
   }
 
   get filePath(): string {
-    return this.schema.filePath ? this.schema.filePath : '';
+    let path = this.schema.filePath ? this.schema.filePath : '';
+
+    //append uuid to path if enabled
+    if (this.schema.uuidEnabled) {
+      path = path !== '' ? path + "/" + this.uuid : this.uuid;
+    }
+
+    return path;
   }
 
   async loadInitialValues() {
@@ -148,7 +172,7 @@ export default class VMultiFileInput extends Vue {
         // set dummy value to satisfy "required"-rule
         this.fileValue = [];
         this.fileValue.push(new File([""], this.documents[0].name));
-        this.input(this.documents);
+        this.input(this.documents.length);
       }
     } catch (error) {
       this.errorMessage = "Die Dateien konnten nicht geladen werden.";
@@ -215,7 +239,7 @@ export default class VMultiFileInput extends Vue {
 
       this.errorMessage = "";
       this.isLoading = false;
-      this.input(this.documents);
+      this.input(this.documents.length);
     } catch (error: any) {
       if (
         error.response &&
@@ -256,13 +280,12 @@ export default class VMultiFileInput extends Vue {
   }
 
   toDataUrl(type: string, data: string): string {
-    const str = `data:${type};base64, ${data}`;
-    return str;
+    return `data:${type};base64, ${data}`;
   }
 
   async getFilenames(): Promise<string[]> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -283,7 +306,7 @@ export default class VMultiFileInput extends Vue {
 
   async getPresignedUrlForPost(file: File): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -310,7 +333,7 @@ export default class VMultiFileInput extends Vue {
 
   async getPresignedUrlForGet(filename: string): Promise<string> {
     const cfg = FetchUtils.getAxiosConfig(FetchUtils.getGETConfig());
-    cfg.baseOptions.headers = { "Content-Type": "application/json" };
+    cfg.baseOptions.headers = {"Content-Type": "application/json"};
     cfg.basePath += "/" + this.apiEndpoint;
 
     let res: any;
@@ -400,7 +423,7 @@ export default class VMultiFileInput extends Vue {
         }
       }
     }
-    this.input(this.documents);
+    this.input(this.documents.length);
   }
 
   base64OfString(content: string) {
@@ -445,11 +468,11 @@ export default class VMultiFileInput extends Vue {
 }
 
 .tooltip {
-   max-width:200px;
+  max-width: 200px;
 }
 
 .v-input--is-disabled:not(.v-input--is-readonly) {
-    pointer-events: all;
+  pointer-events: all;
 }
 
 </style>

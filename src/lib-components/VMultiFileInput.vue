@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Inject, Prop, Vue} from "vue-property-decorator";
+import {Component, Inject, Prop, Vue} from "vue-property-decorator";
 import {VFileInput} from "vuetify/lib/components";
 import {HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory,} from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
@@ -103,17 +103,18 @@ export default class VMultiFileInput extends Vue {
   @Inject("formContext")
   readonly formContext!: FormContext;
 
-  @Emit()
+  @Prop()
+  on: any;
+
   input(value: any): any {
     //return without uuid if not enabled
     if (!this.schema.uuidEnabled) {
-      return {amount: value}
+      return this.on.input({amount: value});
     }
-
-    return {
+    return this.on.input({
       key: this.uuid,
       amount: value
-    };
+    });
   }
 
   created(): void {

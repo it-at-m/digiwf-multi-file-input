@@ -41,16 +41,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Inject, Prop, Vue } from "vue-property-decorator";
-import { VFileInput } from "vuetify/lib/components";
-import {
-  HumanTaskFileRestControllerApiFactory,
-  ServiceStartFileRestControllerApiFactory,
-} from "@/api/api-client/api";
+import {Component, Emit, Inject, Prop, Vue} from "vue-property-decorator";
+import {VFileInput} from "vuetify/lib/components";
+import {HumanTaskFileRestControllerApiFactory, ServiceStartFileRestControllerApiFactory,} from "@/api/api-client/api";
 import FetchUtils from "@/api/FetchUtils";
 import mime from "mime";
 import globalAxios from "axios";
-import { DocumentData, FormContext } from "@/lib-components/types";
+import {DocumentData, FormContext} from "@/lib-components/types";
 import VFilePreview from "@/lib-components/VFilePreview.vue";
 
 @Component({
@@ -64,7 +61,7 @@ export default class VMultiFileInput extends Vue {
   documents: DocumentData[] = [];
   errorMessage = "";
   isLoading = false;
-  generatedUUID = "";
+  uuid = "";
 
   @Prop()
   valid: boolean | undefined;
@@ -107,20 +104,15 @@ export default class VMultiFileInput extends Vue {
 
   @Emit()
   input(value: any): any {
-    if(!this.schema.) {
+    //return without uuid if not enabled
+    if(!this.schema.uuidEnabled) {
       return  { amount : value}
     }
 
-    if(this.value && this.value.key) {
-      return {
-        ...this.value,
-        amount: value
-      }
-    }
-
-    return
-
-    return value;
+    return {
+      key: this.uuid,
+      amount: value
+    };
   }
 
   created(): void {
@@ -128,6 +120,16 @@ export default class VMultiFileInput extends Vue {
       this.errorMessage = "no contextId";
       return;
     }
+
+    //initialize uuid if enabled
+    if(this.schema.uuidEnabled) {
+      if(this.value && this.value.key) {
+        this.uuid = this.value.key;
+      } else {
+        this.uuid = this.generateUUID();
+      }
+    }
+
     this.loadInitialValues();
   }
 
@@ -147,12 +149,13 @@ export default class VMultiFileInput extends Vue {
   get filePath(): string {
     let path = this.schema.filePath ? this.schema.filePath : '';
 
-    if(this.schema)
+    //append uuid to path if enabled
+    if(this.schema.uuidEnabled) {
+      path = path !== '' ? path+"/"+this.uuid : this.uuid;
+    }
 
     return path;
   }
-
-
 
   async loadInitialValues() {
     try {
@@ -209,6 +212,24 @@ export default class VMultiFileInput extends Vue {
     const mimetype = mime.getType(filename);
     return mimetype ? mimetype : "plain/text";
   }
+
+  //generate uuid
+   generateUUID() : string {
+    let d = new Date().getTime();
+    let d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      let r = Math.random() * 16;
+      if(d > 0){
+        r = (d + r)%16 | 0;
+        d = Math.floor(d/16);
+      } else {
+        r = (d2 + r)%16 | 0;
+        d2 = Math.floor(d2/16);
+      }
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
 
   async addDocument(mydata: any, file: File): Promise<void> {
     const startTime = new Date().getTime();
@@ -276,8 +297,7 @@ export default class VMultiFileInput extends Vue {
   }
 
   toDataUrl(type: string, data: string): string {
-    const str = `data:${type};base64, ${data}`;
-    return str;
+    return `data:${type};base64, ${data}`;
   }
 
   async getFilenames(): Promise<string[]> {
